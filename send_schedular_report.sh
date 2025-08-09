@@ -11,11 +11,10 @@ DB_PASS="QAZwsx@1234"
 DB_NAME="hapserviceticketlive"
 CSV_FILE="/D/schedular_report.csv"
 
-# Email Details
-MAIL_TO="recipient@example.com"
+# Email Details (updated)
+MAIL_TO="blessonv0@gmail.com"
 MAIL_SUBJECT="Schedular Report - $(date +%Y-%m-%d)"
-
-# Gmail SMTP via Stunnel
+MAIL_BODY="Hello, this is a test email sent using Blat and Gmail via Stunnel."
 SMTP_SERVER="localhost"
 SMTP_PORT="465"
 SMTP_USER="blesson.connect@gmail.com"
@@ -37,16 +36,15 @@ mysql -h "$DB_HOST" -P "$DB_PORT" -u "$DB_USER" -p"$DB_PASS" -D "$DB_NAME" -e "$
 
 # Check if CSV has more than just the header
 if [ $(wc -l < "$CSV_FILE") -gt 1 ]; then
-    # Send email using Blat with raw string body
-    "C:/blat/blat/full/blat.exe" -body "Please find attached the schedular report." \
-    -to "$MAIL_TO" \
+    # Send email using Blat with attachment
+    echo "$MAIL_BODY" | /c/blat/full/blat.exe - -to "$MAIL_TO" \
     -subject "$MAIL_SUBJECT" \
     -attach "$CSV_FILE" \
     -server "$SMTP_SERVER" -port "$SMTP_PORT" \
     -u "$SMTP_USER" -pw "$SMTP_PASS" \
     -f "$SMTP_FROM"
 
-    echo " Email sent to $MAIL_TO with CSV attachment."
+    echo "✅ Email sent to $MAIL_TO with CSV attachment."
 else
-    echo " No data to send. Query returned no results."
+    echo "⚠️ No data to send. Query returned no results."
 fi
